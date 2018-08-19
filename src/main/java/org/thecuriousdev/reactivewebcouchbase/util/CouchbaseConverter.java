@@ -3,11 +3,9 @@ package org.thecuriousdev.reactivewebcouchbase.util;
 import com.couchbase.client.java.document.JsonDocument;
 import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.AsyncN1qlQueryResult;
-import com.couchbase.client.java.query.AsyncN1qlQueryRow;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import org.reactivestreams.Publisher;
 import org.thecuriousdev.reactivewebcouchbase.domain.CouchbaseDocument;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -26,7 +24,7 @@ public class CouchbaseConverter<T extends CouchbaseDocument> {
   }
 
   public Mono<T> toMono(Observable<JsonDocument> observable) {
-    Publisher<JsonDocument> publisher = RxReactiveStreams.toPublisher(observable);
+    var publisher = RxReactiveStreams.toPublisher(observable);
     return Mono.from(publisher)
         .map(document -> {
           JsonObject jsonObj = document.content();
@@ -48,8 +46,7 @@ public class CouchbaseConverter<T extends CouchbaseDocument> {
   }
 
   public Flux<T> n1qlQueryResultToFlux(Observable<AsyncN1qlQueryResult> query) {
-    Publisher<AsyncN1qlQueryRow> publisher = RxReactiveStreams
-        .toPublisher(query.flatMap(result -> result.rows()));
+    var publisher = RxReactiveStreams.toPublisher(query.flatMap(result -> result.rows()));
 
     return Flux.from(publisher)
         .map(row -> row.value().get(bucketName))

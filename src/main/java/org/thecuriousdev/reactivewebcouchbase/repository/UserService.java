@@ -1,7 +1,6 @@
 package org.thecuriousdev.reactivewebcouchbase.repository;
 
 import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.document.JsonDocument;
 import com.couchbase.client.java.query.N1qlQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +8,6 @@ import org.thecuriousdev.reactivewebcouchbase.domain.User;
 import org.thecuriousdev.reactivewebcouchbase.util.CouchbaseConverter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import rx.Observable;
 
 @Service
 public class UserService {
@@ -33,8 +31,8 @@ public class UserService {
   }
 
   public Mono<User> create(User user) {
-    Observable<JsonDocument> observable = bucket.async().upsert(
-        couchbaseConverter.toCouchbaseDocument(user.getName(), user));
+    var observable = bucket.async()
+        .upsert(couchbaseConverter.toCouchbaseDocument(user.getName(), user));
     return couchbaseConverter.toMono(observable);
   }
 
